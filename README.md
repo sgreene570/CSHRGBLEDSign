@@ -1,2 +1,2 @@
 # cshrgbledsign
-Networked RGB LEDs
+Networked RGB LEDs. Work in progress. Implemented using python GPIO.
