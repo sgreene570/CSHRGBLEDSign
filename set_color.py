@@ -1,3 +1,9 @@
+"""
+set_color.py
+Takes RGB values over the command line along with a timer length
+Implements argparse and GPIO
+"""
+
 
 import argparse
 import RPi.GPIO as GPIO
@@ -8,8 +14,9 @@ def main() -> None:
     parser.add_argument("r", help="Enter r value(0-255)")
     parser.add_argument("g", help="Enter g value(0-255)")
     parser.add_argument("b", help="Enter b value(0-255)")
+    parser.add_argument("time", help="Enter a time length");
     args = parser.parse_args()
-    set_color(int(args[0]), args([1]), args([2]))
+    set_color(int(args[0]), args([1]), args([2])), int(args[3])
 
 def set_color(redval, greenval, blueval, timer):
     # LED pin mapping.
