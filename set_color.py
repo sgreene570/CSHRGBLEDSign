@@ -16,13 +16,13 @@ def main() -> None:
     parser.add_argument("b", help="Enter b value(0-255)")
     parser.add_argument("time", help="Enter a time length");
     args = parser.parse_args()
-    set_color(int(args[0]), args([1]), args([2])), int(args[3])
+    set_color(int(args.r), int(args.g), int(args.b), int(args.time))
 
 def set_color(redval, greenval, blueval, timer):
     # LED pin mapping.
-    red = {18}
-    green = {23}
-    blue = {24}
+    red = 18
+    green = 23
+    blue = 24
 
     # GPIO Setup.
     GPIO.setmode(GPIO.BCM)
