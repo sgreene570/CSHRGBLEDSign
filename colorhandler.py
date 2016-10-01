@@ -1,11 +1,11 @@
 from flask import Flask, redirect, request, render_template
 app = Flask(__name__)
-import os
+from pathlib import Path
 
 
 @app.route('/set', methods=['GET', 'POST'])
 def colorhandler():
-    with open(os.path.abspath("/dev/pi-blaster")) as f:
+    with open(str(Path("pi-blaster").resolve())) as f:
         red = "22=" + "%.3f" % (int(request.form['redval']) / 255.0)
         green = "23=" + "%.3f" % (int(request.form['greenval']) / 255.0)
         blue = "24=" + "%.3f" % (int(request.form['blueval']) / 255.0)
