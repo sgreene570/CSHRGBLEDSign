@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route('/set', methods=['GET', 'POST'])
 def colorhandler():
-    f = open(str(Path("/dev/pi-blaster").absolute()))
+    f = open(str(Path("/dev/pi-blaster").absolute()), "w")
     red = "22=" + "%.3f" % (int(request.form['redval']) / 255.0)
     green = "23=" + "%.3f" % (int(request.form['greenval']) / 255.0)
     blue = "24=" + "%.3f" % (int(request.form['blueval']) / 255.0)
