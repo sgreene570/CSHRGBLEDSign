@@ -1,3 +1,4 @@
+from __future__ import print_function
 from flask import Flask, redirect, request, render_template
 from pathlib import Path
 app = Flask(__name__)
