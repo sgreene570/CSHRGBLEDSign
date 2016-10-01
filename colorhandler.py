@@ -2,7 +2,7 @@ from flask import Flask, request
 app = Flask(__name__)
 
 
-@app.route("/index", methods=['post'])
+@app.route("/", methods=['POST'])
 def color():
     test = request.form['redval'] + " " + request.form['greeneval'] + " " + request.form['blueval']
     f = open("/dev/pi-blaster")
