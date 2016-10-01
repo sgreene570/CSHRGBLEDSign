@@ -5,9 +5,9 @@ app = Flask(__name__)
 @app.route('/set', methods=['GET', 'POST'])
 def colorhandler():
     with open("/dev/pi-blaster") as f:
-        print("22=" + str(float(request.form['redval'] / 255.0))) >> f
-        print("23=" + str(float(request.form['greenval'] / 255.0))) >> f
-        print("24=" + str(float(request.form['blueval'] / 255.0))) >> f
+        print("22=" + str(request.form['redval'] / 255.0), f)
+        print("23=" + str(request.form['greenval'] / 255.0), f)
+        print("24=" + str(request.form['blueval'] / 255.0), f)
     return redirect('/')
 
 
