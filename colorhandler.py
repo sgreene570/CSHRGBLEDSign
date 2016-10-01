@@ -2,7 +2,7 @@ from flask import Flask, redirect, request
 app = Flask(__name__)
 
 
-@app.route('/', methods = ['POST'])
+@app.route('/set', methods=['GET', 'POST'])
 def colorhandler():
     print(request.form['redval'])
     print(request.form['greenval'])
@@ -12,4 +12,4 @@ def colorhandler():
 
 
 if __name__ == '__main__':
-   app.run(debug = True)
+   app.run(debug=True)
