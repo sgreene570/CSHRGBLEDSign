@@ -11,7 +11,7 @@ def colorhandler():
     color = request.form['color']
     timer = int(request.form['timer'])
     red = "22=" + "%.3f" % (int(color[:2], 16) / 255.0)
-    green = "23=" + "%.3f" % (int(color[2, 4], 16) / 255.0)
+    green = "23=" + "%.3f" % (int(color[2:4], 16) / 255.0)
     blue = "24=" + "%.3f" % (int(color[4:], 16) / 255.0)
     print(red, file=f)
     print(green, file=f)
