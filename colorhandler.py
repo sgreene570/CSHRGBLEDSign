@@ -10,7 +10,7 @@ def colorhandler():
     f = open(str(Path("/dev/pi-blaster").absolute()), "w")
     color = request.form['color']
     timer = int(request.form['timer'])
-	print(str(timer))
+    print(str(timer))
     red = "22=" + "%.3f" % (int(color[:2], 16) / 255.0)
     green = "23=" + "%.3f" % (int(color[2:4], 16) / 255.0)
     blue = "24=" + "%.3f" % (int(color[4:], 16) / 255.0)
