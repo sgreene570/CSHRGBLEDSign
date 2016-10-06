@@ -1,7 +1,7 @@
 """
 set_color.py
 Takes RGB values over the command line along with a timer length
-Implements argparse and GPIO
+Implements argparse and GPIO, default LED pins set to 18, 23, and 24
 """
 
 
