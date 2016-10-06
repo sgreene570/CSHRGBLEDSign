@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 @app.route('/set', methods=['GET', 'POST'])
 def colorhandler():
-    f = open(str(Path("/dev/pi-blaster").absolute()), "w", 0)       # "w" forces file flush every print
+    f = open(str(Path("/dev/pi-blaster").absolute()), "w", 0)       # 0 forces file flushing
     color = request.form['color']
     timer = int(request.form['timer'])
     loop = int(request.form['loop'])
@@ -35,7 +35,7 @@ def colorhandler():
             print(blue, file=f)
             x += 1
 
-    return "Color: " + request.form[color] + "Timer: " + request.form['timer'] + "Loop: " + request.form['loop']
+    return "Color: " + request.form['color'] + "Timer: " + request.form['timer'] + "Loop: " + request.form['loop']
 
 
 @app.route('/')
