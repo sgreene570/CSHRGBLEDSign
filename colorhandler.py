@@ -9,6 +9,9 @@ from pathlib import Path
 import time
 app = Flask(__name__)
 
+color = "AAAAAA"
+timer = 0
+loop = 0
 
 @app.route('/set', methods=['GET', 'POST'])
 def colorhandler():
@@ -25,7 +28,7 @@ def colorhandler():
 
     if timer != 0 and loop > 0:
         for x in range(0, loop):
-            time.sleep(timer / 100.0)
+            time.sleep(timer / 100.0)        # convert time to milliseconds for blinks
             print("22=0", file=f)
             print("23=0", file=f)
             print("24=0", file=f)
@@ -35,12 +38,20 @@ def colorhandler():
             print(blue, file=f)
             x += 1
 
-    return "Color: " + request.form['color'] + "Timer: " + request.form['timer'] + "Loop: " + request.form['loop']
+    return "Color: " + request.form['color'] + " Timer: " + request.form['timer'] + " Loop: " + request.form['loop']
+
+
+@app.route('/getLast', methods=['GET'])
+def getLast():
+    #returns last recieved set of instructions even if they are still running. Good for repeating
+    return "Last arguments recevied: Color: " + color + " timer: " + timer + " loop: " + loop
 
 
 @app.route('/')
 def index():
+    #basic instructions for connection to wrong url rather than 404
     return "use /set with color, timer, and loop args"
+
 
 if __name__ == '__main__':
    app.run()
