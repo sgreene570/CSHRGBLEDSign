@@ -44,7 +44,7 @@ def colorhandler():
 @app.route('/getLast', methods=['GET'])
 def getLast():
     #returns last recieved set of instructions even if they are still running. Good for repeating
-    return "Last arguments recevied: Color: " + color + " timer: " + timer + " loop: " + loop
+    return "Last arguments recevied: Color: " + color + " timer: " + str(timer) + " loop: " + str(loop)
 
 
 @app.route('/')
