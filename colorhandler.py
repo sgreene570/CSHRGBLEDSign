@@ -9,12 +9,12 @@ from pathlib import Path
 import time
 app = Flask(__name__)
 
-color = "AAAAAA"
-timer = 0
-loop = 0
 
 @app.route('/set', methods=['GET', 'POST'])
 def colorhandler():
+    global color
+    global timer
+    global loop
     f = open(str(Path("/dev/pi-blaster").absolute()), "w", 0)       # 0 forces file flushing
     color = request.form['color']
     timer = int(request.form['timer'])
@@ -38,13 +38,16 @@ def colorhandler():
             print(blue, file=f)
             x += 1
 
-    return "Color: " + request.form['color'] + " Timer: " + request.form['timer'] + " Loop: " + request.form['loop']
+    return "Color: " + color + " Timer: " + str(timer) + " Loop: " + str(loop)
 
 
 @app.route('/getLast', methods=['GET'])
 def getLast():
     #returns last recieved set of instructions even if they are still running. Good for repeating
-    return "Last arguments recevied: Color: " + color + " timer: " + str(timer) + " loop: " + str(loop)
+    if 'color' in globals() and 'timer' in globals() and 'loop' in globals(): 
+        return "Last arguments recevied: Color: " + color + " timer: " + str(timer) + " loop: " + str(loop)
+
+    return "no arguments have been perceived"
 
 
 @app.route('/')
