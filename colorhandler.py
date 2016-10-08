@@ -65,6 +65,25 @@ def parseTwoColors():
     return setColor(colorOne, 0, 0, f)
 
 
+@app.route('/setFade', methods=['GET', 'POST'])
+def parseFade():
+    global timer
+    global loop
+    global color
+    f = open(str(Path("/dev/pi-blaster").absolute()), "w", 0)
+    timer = int(request.form['timer'])
+    loop = int(request.form['loop'])
+    colorOne = int(request.form['colorOne'])
+    colorTwo = int(request.form['colorTwo'])
+    for x in range(colorOne, colorTwo):
+        setColor(str(colorOne), timer, loop, f)
+        if colorOne > colorTwo:
+            x -= 1
+        else:
+            x += 1
+
+    return setColor(colorTwo, 0, 0, f)
+
 @app.route('/getLast', methods=['GET'])
 def getLast():
     #returns last recieved set of instructions even if they are still running. Good for repeating
