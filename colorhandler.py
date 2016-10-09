@@ -1,6 +1,7 @@
 """
 colorhandler.py
 A flask script that handles requests to change GPIO PWN through the pi-blaster library
+Change pin numbers at the top of setColor method to change which pinouts of the raspi are used
 Stephen Greene
 """
 from __future__ import print_function
@@ -42,7 +43,7 @@ def setColor(color, timer, loop, f):
             print(blue, file=f)
             x += 1
 
-    return "Color: " + color + " Timer: " + str(timer) + " Loop: " + str(loop)
+    return {"Color" :  color, " Timer" : timer, "Loop" : loop}
 
 
 @app.route('/set2', methods=['GET', 'POST'])
@@ -88,7 +89,7 @@ def parseFade():
 def getLast():
     #returns last recieved set of instructions even if they are still running. Good for repeating
     if 'color' in globals() and 'timer' in globals() and 'loop' in globals(): 
-        return "Last arguments recevied: Color: " + color + " timer: " + str(timer) + " loop: " + str(loop)
+        return {"Color" :  color, " Timer" : timer, "Loop" : loop}
 
     return "no arguments have been received"
 
