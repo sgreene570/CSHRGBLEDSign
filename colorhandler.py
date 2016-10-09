@@ -5,9 +5,11 @@ Change pin numbers at the top of setColor method to change which pinouts of the 
 Stephen Greene
 """
 from __future__ import print_function
-from flask import Flask, redirect, request, render_template
+from flask import Flask, redirect, request, render_template, jsonify
 from pathlib import Path
 import time
+from flask_restful import Resource, Api
+
 app = Flask(__name__)
 
 
@@ -43,8 +45,7 @@ def setColor(color, timer, loop, f):
             print(blue, file=f)
             x += 1
 
-    return {"Color" :  color, " Timer" : timer, "Loop" : loop}
-
+    return jsonify( {"Color" : str(color)}, {" Timer" : str(timer)}, {"Loop" : str(loop)})
 
 @app.route('/set2', methods=['GET', 'POST'])
 def parseTwoColors():
@@ -66,7 +67,7 @@ def parseTwoColors():
     return setColor(colorOne, 0, 0, f)
 
 
-@app.route('/setFade', methods=['GET', 'POST'])
+@app.route('/setFade', methods=['POST'])
 def parseFade():
     global timer
     global loop
@@ -76,12 +77,13 @@ def parseFade():
     loop = int(request.form['loop'])
     colorOne = request.form['colorOne']
     colorTwo = request.form['colorTwo']
-    for x in range(int(colorOne, 16), int(colorTwo, 16)):
-        setColor(x, timer, loop, f)
-        if int(colorOne, 16) > int(colorTwo, 16):
-            x -= hex(1)
-        else:
-            x += hex(1)
+    if int(colorOne, 16) > int(colorTwo, 16):
+        inc = -8
+    else:
+        inc = 8
+    for x in range(int(colorOne, 16), int(colorTwo, 16), inc):
+        print(hex(x))
+        setColor(str(hex(x))[2:], timer, loop, f)        #remove front 2 chars of hex value
 
     return setColor(colorTwo, 0, 0, f)
 
