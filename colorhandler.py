@@ -75,7 +75,7 @@ def parseFade():
     loop = int(request.form['loop'])
     colorOne = request.form['colorOne']
     colorTwo = request.form['colorTwo']
-    for x in range(int(colorOne, 16), int(colorTwo, 16):
+    for x in range(int(colorOne, 16), int(colorTwo, 16)):
         setColor(x, timer, loop, f)
         if int(colorOne, 16) > int(colorTwo, 16):
             x -= hex(1)
