@@ -73,14 +73,14 @@ def parseFade():
     f = open(str(Path("/dev/pi-blaster").absolute()), "w", 0)
     timer = int(request.form['timer'])
     loop = int(request.form['loop'])
-    colorOne = int(request.form['colorOne'])
-    colorTwo = int(request.form['colorTwo'])
-    for x in range(colorOne, colorTwo):
-        setColor(str(colorOne), timer, loop, f)
-        if colorOne > colorTwo:
-            x -= 1
+    colorOne = request.form['colorOne']
+    colorTwo = request.form['colorTwo']
+    for x in range(int(colorOne, 16), int(colorTwo, 16):
+        setColor(x, timer, loop, f)
+        if int(colorOne, 16) > int(colorTwo, 16):
+            x -= hex(1)
         else:
-            x += 1
+            x += hex(1)
 
     return setColor(colorTwo, 0, 0, f)
 
