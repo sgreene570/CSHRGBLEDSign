@@ -76,14 +76,20 @@ def parseFade():
     timer = int(request.form['timer'])
     loop = int(request.form['loop'])
     colorOne = request.form['colorOne']
+    colorOneVals = [int(colorOne[:2], 16), int(colorOne[2:4], 16), int(colorOne[4:], 16)]
     colorTwo = request.form['colorTwo']
-    if int(colorOne, 16) > int(colorTwo, 16):
-        inc = -8
-    else:
-        inc = 8
-    for x in range(int(colorOne, 16), int(colorTwo, 16), inc):
-        print(hex(x))
-        setColor(str(hex(x))[2:], timer, loop, f)        #remove front 2 chars of hex value
+    colorTwoVals = [int(colorTwo[:2], 16), int(colorTwo[2:4], 16), int(colorTwo[4:], 16)]
+    while (colorOneVals[0] != colorTwoVals[0]) or (colorOneVals[1] != colorTwoVals[1]) or  (colorOneVals[2] != colorTwoVals[2]):
+        hexColor = ""
+        for x in range(0, 3):
+            if colorOneVals[x] > colorTwoVals[x]:
+                colorOneVals[x] -= 1
+            elif colorOneVals[x] < colorTwoVals[x]:
+                colorOneVals[x] += 1
+            if colorOneVals[x] < 10:
+                hexColor += "0"
+            hexColor += str(hex(colorOneVals[x]))[2:]
+        setColor(hexColor, timer, loop, f)        #remove front 2 chars of hex value
 
     return setColor(colorTwo, 0, 0, f)
 
@@ -91,7 +97,7 @@ def parseFade():
 def getLast():
     #returns last recieved set of instructions even if they are still running. Good for repeating
     if 'color' in globals() and 'timer' in globals() and 'loop' in globals(): 
-        return {"Color" :  color, " Timer" : timer, "Loop" : loop}
+        return jsonify({"Color" :  color, " Timer" : timer, "Loop" : loop})
 
     return "no arguments have been received"
 
