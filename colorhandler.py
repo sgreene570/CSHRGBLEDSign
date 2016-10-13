@@ -10,6 +10,7 @@ from pathlib import Path
 import time
 from flask_restful import Resource, Api
 
+
 app = Flask(__name__)
 
 
@@ -47,6 +48,7 @@ def setColor(color, timer, loop, f):
 
     return jsonify( {"Color" : str(color)}, {" Timer" : str(timer)}, {"Loop" : str(loop)})
 
+
 @app.route('/set2', methods=['GET', 'POST'])
 def parseTwoColors():
     global timer
@@ -63,7 +65,7 @@ def parseTwoColors():
         setColor(colorTwo, 0, 0, f)
         time.sleep(timer / 100.0)
         x += 1
-    color = colorOne        #colorOne will always be last color displayed
+    color = colorOne                            #colorOne will always be last color displayed
     return setColor(colorOne, 0, 0, f)
 
 
@@ -79,24 +81,25 @@ def parseFade():
     colorOneVals = [int(colorOne[:2], 16), int(colorOne[2:4], 16), int(colorOne[4:], 16)]
     colorTwo = request.form['colorTwo']
     colorTwoVals = [int(colorTwo[:2], 16), int(colorTwo[2:4], 16), int(colorTwo[4:], 16)]
-    while (colorOneVals[0] != colorTwoVals[0]) or (colorOneVals[1] != colorTwoVals[1]) or  (colorOneVals[2] != colorTwoVals[2]):
+    while (colorOneVals[0] != colorTwoVals[0]) or (colorOneVals[1] != colorTwoVals[1]) or (colorOneVals[2] != colorTwoVals[2]):
         hexColor = ""
         for x in range(0, 3):
             if colorOneVals[x] > colorTwoVals[x]:
                 colorOneVals[x] -= 1
             elif colorOneVals[x] < colorTwoVals[x]:
                 colorOneVals[x] += 1
-            if colorOneVals[x] < 10:
+            if colorOneVals[x] < 10:                             #format hex digits in string correctly
                 hexColor += "0"
-            hexColor += str(hex(colorOneVals[x]))[2:]
-        setColor(hexColor, timer, loop, f)        #remove front 2 chars of hex value
+            hexColor += str(hex(colorOneVals[x]))[2:]            #remove front 2 chars of hex value
+        setColor(hexColor, timer, loop, f)
 
     return setColor(colorTwo, 0, 0, f)
+
 
 @app.route('/getLast', methods=['GET'])
 def getLast():
     #returns last recieved set of instructions even if they are still running. Good for repeating
-    if 'color' in globals() and 'timer' in globals() and 'loop' in globals(): 
+    if 'color' in globals() and 'timer' in globals() and 'loop' in globals():
         return jsonify({"Color" :  color, " Timer" : timer, "Loop" : loop})
 
     return "no arguments have been received"
@@ -105,7 +108,7 @@ def getLast():
 @app.route('/')
 def index():
     #basic instructions for connection to wrong url rather than 404
-    return "use /set with color, timer, and loop args or /set2 with colorOne, colorTwo, timer, and loop"
+    return "/set: color, timer, and loop \n /set2: colorOne, colorTwo, timer, and loop \n /setFade colorOne, colorTwo, timer, and loop"
 
 
 if __name__ == '__main__':
