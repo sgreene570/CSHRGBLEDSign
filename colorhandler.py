@@ -7,7 +7,7 @@ Stephen Greene
 from __future__ import print_function
 from flask import Flask, redirect, request, render_template, jsonify
 from pathlib import Path
-import time
+import time, hashlib
 from flask_restful import Resource, Api
 
 
@@ -16,10 +16,7 @@ app = Flask(__name__)
 
 @app.route('/set', methods=['GET', 'POST'])
 def parseColor():
-    f = open(str(Path("/dev/pi-blaster").absolute()), "w", 0)       # 0 forces file flushing
-    global color
-    global timer
-    global loop
+    f = openFile()
     color = request.form['color']
     timer = int(request.form['timer'])
     loop = int(request.form['loop'])
@@ -51,10 +48,7 @@ def setColor(color, timer, loop, f):
 
 @app.route('/set2', methods=['GET', 'POST'])
 def parseTwoColors():
-    global timer
-    global loop
-    global color
-    f = open(str(Path("/dev/pi-blaster").absolute()), "w", 0)       # 0 forces file flushing
+    f = openFile()
     timer = int(request.form['timer'])
     loop = int(request.form['loop'])
     colorOne = request.form['colorOne']
@@ -71,10 +65,7 @@ def parseTwoColors():
 
 @app.route('/setFade', methods=['POST'])
 def parseFade():
-    global timer
-    global loop
-    global color
-    f = open(str(Path("/dev/pi-blaster").absolute()), "w", 0)
+    f = openFile()
     timer = int(request.form['timer'])
     loop = int(request.form['loop'])
     colorOne = request.form['colorOne']
@@ -96,13 +87,18 @@ def parseFade():
     return setColor(colorTwo, 0, 0, f)
 
 
-@app.route('/getLast', methods=['GET'])
-def getLast():
-    #returns last recieved set of instructions even if they are still running. Good for repeating
-    if 'color' in globals() and 'timer' in globals() and 'loop' in globals():
-        return jsonify({"Color" :  color, " Timer" : timer, "Loop" : loop})
+@app.route('/setString', methods=['POST'])
+def parseString():
+    f = openFile()
+    h = hashlib.md5(request.form['string'])
+    n = int(h.hexdigest(), 16)
+    n = n % (256 ** 3)
+    return setColor("%06x" % n, 0, 0, f)
 
-    return "no arguments have been received"
+
+def openFile():
+    f = open(str(Path("/dev/pi-blaster").absolute()), "w", 0)        #open file with write premissions and instant flushing
+    return f
 
 
 @app.route('/')
