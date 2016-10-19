@@ -14,7 +14,7 @@ from flask_restful import Resource, Api
 app = Flask(__name__)
 
 
-@app.route('/set', methods=['GET', 'POST'])
+@app.route('/set', methods=['POST'])
 def parseColor():
     f = openFile()
     color = request.form['color']
@@ -23,7 +23,7 @@ def parseColor():
     return setColor(color, timer, loop, f)
 
 
-@app.route('/set2', methods=['GET', 'POST'])
+@app.route('/set2', methods=['POST'])
 def parseTwoColors():
     f = openFile()
     timer = int(request.form['timer'])
@@ -69,6 +69,14 @@ def parseString():
     f = openFile()
     color = stringColor(request.form['string'])
     return setColor(color, 0, 0, f)
+
+
+@app.route('/setStringFade', methods=['POST'])
+def setStringFade():
+    f = openfile()
+    colorOne = stringColor(request.form['stringOne'])
+    colorTwo = stringColor(request.form['stringTwo'])
+    #implementation pending: need to move around /setFade method for code re use
 
 
 @app.route('/')
