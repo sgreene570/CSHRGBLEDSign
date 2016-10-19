@@ -67,10 +67,8 @@ def parseFade():
 @app.route('/setString', methods=['POST'])
 def parseString():
     f = openFile()
-    h = hashlib.md5(request.form['string'])
-    n = int(h.hexdigest(), 16)
-    n = n % (256 ** 3)
-    return setColor("%06x" % n, 0, 0, f)
+    color = stringColor(request.form['string'])
+    return setColor(color, 0, 0, f)
 
 
 @app.route('/')
@@ -100,6 +98,13 @@ def setColor(color, timer, loop, f):
             x += 1
 
     return jsonify( {"Color" : str(color)}, {" Timer" : str(timer)}, {"Loop" : str(loop)})
+
+
+def stringColor(string):
+    h = hashlib.md5(string)
+    n = int(h.hexdigest(), 16)
+    n = n % (256 ** 3)
+    return "%06x" % n
 
 
 def openFile():
