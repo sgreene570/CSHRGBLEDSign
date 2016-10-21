@@ -16,67 +16,40 @@ app = Flask(__name__)
 
 @app.route('/set', methods=['POST'])
 def parseColor():
-    f = openFile()
     color = request.form['color']
     timer = int(request.form['timer'])
     loop = int(request.form['loop'])
-    return setColor(color, timer, loop, f)
-
-
-@app.route('/set2', methods=['POST'])
-def parseTwoColors():
-    f = openFile()
-    timer = int(request.form['timer'])
-    loop = int(request.form['loop'])
-    colorOne = request.form['colorOne']
-    colorTwo = request.form['colorTwo']
-    for x in range(0, loop):
-        setColor(colorOne, 0, 0, f)
-        time.sleep(timer / 100.0)
-        setColor(colorTwo, 0, 0, f)
-        time.sleep(timer / 100.0)
-        x += 1
-    color = colorOne                            #colorOne will always be last color displayed
-    return setColor(colorOne, 0, 0, f)
+    setColor(color, timer, loop)
+    return jsonify({"Function" : "Set color"}, {"Color" : str(color)}, {"Timer" : str(timer)}, {"Loop" : str(loop)})
 
 
 @app.route('/setFade', methods=['POST'])
 def parseFade():
-    f = openFile()
     timer = int(request.form['timer'])
     loop = int(request.form['loop'])
     colorOne = request.form['colorOne']
-    colorOneVals = [int(colorOne[:2], 16), int(colorOne[2:4], 16), int(colorOne[4:], 16)]
     colorTwo = request.form['colorTwo']
-    colorTwoVals = [int(colorTwo[:2], 16), int(colorTwo[2:4], 16), int(colorTwo[4:], 16)]
-    while (colorOneVals[0] != colorTwoVals[0]) or (colorOneVals[1] != colorTwoVals[1]) or (colorOneVals[2] != colorTwoVals[2]):
-        hexColor = ""
-        for x in range(0, 3):
-            if colorOneVals[x] > colorTwoVals[x]:
-                colorOneVals[x] -= 1
-            elif colorOneVals[x] < colorTwoVals[x]:
-                colorOneVals[x] += 1
-            if colorOneVals[x] < 10:                             #format hex digits in string correctly
-                hexColor += "0"
-            hexColor += str(hex(colorOneVals[x]))[2:]            #remove front 2 chars of hex value
-        setColor(hexColor, timer, loop, f)
-
-    return setColor(colorTwo, 0, 0, f)
+    setFade(colorOne, colorTwo, timer, loop)
+    return jsonify({"Function" : "Fade"}, {"Starting color" : str(colorOne)},
+        {"Ending color" : str(colorTwo)}, {"Timer" : str(timer)}, {"Loop" : str(loop)})
 
 
 @app.route('/setString', methods=['POST'])
 def parseString():
-    f = openFile()
     color = stringColor(request.form['string'])
-    return setColor(color, 0, 0, f)
+    setColor(color, 0, 0)
+    return jsonify({"Function" : "Set color with string"}, {"Color" : str(color)})
 
 
 @app.route('/setStringFade', methods=['POST'])
-def setStringFade():
-    f = openfile()
+def praseStringFade():
+    timer = int(request.form['timer'])
+    loop = int(request.form['loop'])
     colorOne = stringColor(request.form['stringOne'])
     colorTwo = stringColor(request.form['stringTwo'])
-    #implementation pending: need to move around /setFade method for code re use
+    setFade(colorOne, colorTwo, timer, loop)
+    return jsonify({"Function" : "Fade from Strings"}, {"Starting color" : str(colorOne)},
+        {"Ending color" : str(colorTwo)}, {"Timer" : str(timer)}, {"Loop" : str(loop)})
 
 
 @app.route('/')
@@ -85,7 +58,8 @@ def index():
     return "/set: color, timer, and loop \n /set2: colorOne, colorTwo, timer, and loop \n /setFade colorOne, colorTwo, timer, and loop"
 
 
-def setColor(color, timer, loop, f):
+def setColor(color, timer, loop):
+    f = openFile()
     red = "22=" + "%.3f" % (int(color[:2], 16) / 255.0)
     green = "23=" + "%.3f" % (int(color[2:4], 16) / 255.0)
     blue = "24=" + "%.3f" % (int(color[4:], 16) / 255.0)
@@ -105,7 +79,21 @@ def setColor(color, timer, loop, f):
             print(blue, file=f)
             x += 1
 
-    return jsonify( {"Color" : str(color)}, {" Timer" : str(timer)}, {"Loop" : str(loop)})
+
+def setFade(colorOne, colorTwo, timer, loop):
+    colorOneVals = [int(colorOne[:2], 16), int(colorOne[2:4], 16), int(colorOne[4:], 16)]
+    colorTwoVals = [int(colorTwo[:2], 16), int(colorTwo[2:4], 16), int(colorTwo[4:], 16)]
+    while (colorOneVals[0] != colorTwoVals[0]) or (colorOneVals[1] != colorTwoVals[1]) or (colorOneVals[2] != colorTwoVals[2]):
+        hexColor = ""
+        for x in range(0, 3):
+            if colorOneVals[x] > colorTwoVals[x]:
+                colorOneVals[x] -= 1
+            elif colorOneVals[x] < colorTwoVals[x]:
+                colorOneVals[x] += 1
+            if colorOneVals[x] < 10:                             #format hex digits in string correctly
+                hexColor += "0"
+            hexColor += str(hex(colorOneVals[x]))[2:]            #remove front 2 chars of hex value
+        setColor(hexColor, timer, loop)
 
 
 def stringColor(string):
