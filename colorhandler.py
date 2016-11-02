@@ -3,7 +3,7 @@ colorhandler.py
 A flask script that handles requests to change GPIO PWN duty cycle 
 with the pi-blaster library.
 Change pin numbers at the top of the setColor function 
-to change which pinouts of the raspi are used
+to change which pinouts of the raspi are used.
 Author: sgreene570
 """
 from __future__ import print_function
@@ -16,62 +16,60 @@ from flask_restful import Resource, Api
 app = Flask(__name__)
 
 
-@app.route('/set', methods=['POST'])
+@app.route("/set", methods=["POST"])
 def parseColor():
-    color = request.form['color']
-    timer = int(request.form['timer'])
-    loop = int(request.form['loop'])
-    setColor(color, timer, loop)
+    color = request.form["color"]
+    setColor(color)
     return jsonify({"Function" : "Set color"}, 
-        {"Color" : str(color)}, 
-        {"Timer" : str(timer)}, 
-        {"Loop" : str(loop)})
+        {"Color" : str(color)})
 
 
-@app.route('/setFade', methods=['POST'])
+@app.route("/setFade", methods=["POST"])
 def parseFade():
-    timer = int(request.form['timer'])
-    loop = int(request.form['loop'])
-    colorOne = request.form['colorOne']
-    colorTwo = request.form['colorTwo']
-    setFade(colorOne, colorTwo, timer, loop)
+    colorOne = request.form["colorOne"]
+    colorTwo = request.form["colorTwo"]
+    setFade(colorOne, colorTwo)
     return jsonify({"Function" : "Fade"}, 
         {"Starting color" : str(colorOne)},
-        {"Ending color" : str(colorTwo)}, 
-        {"Timer" : str(timer)}, 
-        {"Loop" : str(loop)})
+        {"Ending color" : str(colorTwo)})
 
 
-@app.route('/setString', methods=['POST'])
+@app.route("/setString", methods=["POST"])
 def parseString():
-    color = stringColor(request.form['string'])
-    setColor(color, 0, 0)
+    color = stringColor(request.form["string"])
+    setColor(color)
     return jsonify({"Function" : "Set color with string"}, 
         {"Color" : str(color)})
 
 
-@app.route('/setStringFade', methods=['POST'])
+@app.route("/setStringFade", methods=["POST"])
 def praseStringFade():
-    timer = int(request.form['timer'])
-    loop = int(request.form['loop'])
-    colorOne = stringColor(request.form['stringOne'])
-    colorTwo = stringColor(request.form['stringTwo'])
-    setFade(colorOne, colorTwo, timer, loop)
+    colorOne = stringColor(request.form["stringOne"])
+    colorTwo = stringColor(request.form["stringTwo"])
+    setFade(colorOne, colorTwo)
     return jsonify({"Function" : "Fade from Strings"}, 
         {"Starting color" : str(colorOne)},
-        {"Ending color" : str(colorTwo)}, 
-        {"Timer" : str(timer)}, 
-        {"Loop" : str(loop)})
+        {"Ending color" : str(colorTwo)})
 
 
-@app.route('/')
+@app.route("/setOff")
+def turnOutputOff():
+    setColor("000000");
+    return jsonify({"Function" : "Set lights to OFF"})
+
+
+@app.route("/")
 def index():
     #basic instructions for connection to wrong url rather than 404
-    return """/set: color, timer, and loop \n /set2: colorOne, colorTwo, timer, 
-        and loop \n /setFade colorOne, colorTwo, timer, and loop"""
+    return jsonify({"Available functions" : "params"}, 
+        {"/set" : "Int color (6 digit hex format)"}, 
+        {"/setString" : "String stringOne, String stringTwo (to be converted to hex color value)"},
+        {"/setFade" : "Int colorOne, Int colorTwo (6 digit hex format)"},
+        {"/setStringFade" : "String stringOne, String stringTwo (to be converted to hex color values)"},
+        {"/setOff" : "No params: turns lights off (hex value 000000)"})
 
 
-def setColor(color, timer, loop):
+def setColor(color):
     f = openFile()
     red = "22=" + "%.3f" % (int(color[:2], 16) / 255.0)
     green = "23=" + "%.3f" % (int(color[2:4], 16) / 255.0)
@@ -80,20 +78,8 @@ def setColor(color, timer, loop):
     print(green, file=f)
     print(blue, file=f)
 
-    if timer > 0 and loop > 0:
-        for x in range(0, loop):
-            time.sleep(timer / 100.0)  #convert time to milliseconds for blinks
-            print("22=0", file=f)
-            print("23=0", file=f)
-            print("24=0", file=f)
-            time.sleep(timer / 100.0)
-            print(red, file=f)
-            print(green, file=f)
-            print(blue, file=f)
-            x += 1
 
-
-def setFade(colorOne, colorTwo, timer, loop):
+def setFade(colorOne, colorTwo):
     colorOneVals = [int(colorOne[:2], 16), int(colorOne[2:4], 16), 
     int(colorOne[4:], 16)]
 
@@ -113,7 +99,7 @@ def setFade(colorOne, colorTwo, timer, loop):
                 hexColor += "0"
             #remove front 2 chars of hex value
             hexColor += str(hex(colorOneVals[x]))[2:]
-        setColor(hexColor, timer, loop)
+        setColor(hexColor)
 
 
 def stringColor(string):
@@ -129,6 +115,6 @@ def openFile():
     return f
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
    app.run()
 
