@@ -4,7 +4,7 @@ A flask script that handles requests to change GPIO PWN duty cycle
 with the pi-blaster library.
 Change pin numbers at the top of the setColor function 
 to change which pinouts of the raspi are used.
-Author: sgreene570
+Author: Stephen Greene 
 """
 from __future__ import print_function
 from flask import Flask, redirect, request, render_template, jsonify
@@ -62,10 +62,10 @@ def turnOutputOff():
 def index():
     #basic instructions for connection to wrong url rather than 404
     return jsonify({"Available functions" : "params"}, 
-        {"/set" : "Int color (6 digit hex format)"}, 
-        {"/setString" : "String stringOne, String stringTwo (to be converted to hex color value)"},
-        {"/setFade" : "Int colorOne, Int colorTwo (6 digit hex format)"},
-        {"/setStringFade" : "String stringOne, String stringTwo (to be converted to hex color values)"},
+        {"/set" : "Color=(6 digit hex format)"}, 
+        {"/setString" : "stringOne=""&stringTwo="" (to be converted to hex color value)"},
+        {"/setFade" : "colorOne=(6 digit hex format)&colorTw=(6 digit hex format)"},
+        {"/setStringFade" : "stringOne=""&stringTwo="" (to be converted to hex color values)"},
         {"/setOff" : "No params: turns lights off (hex value 000000)"})
 
 
