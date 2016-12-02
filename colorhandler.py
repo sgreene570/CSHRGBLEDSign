@@ -15,8 +15,8 @@ app = Flask(__name__)
 
 
 REDPIN = 22
-BLUEPIN = 23
-GREENPIN = 24
+GREENPIN = 23
+BLUEPIN = 24
 
 
 @app.route("/set", methods=["POST"])
@@ -36,16 +36,16 @@ def turnOutputOff():
 @app.route("/")
 def index():
     #basic instructions for connection to /
-    return jsonify({"MOLS Help Request"},
+    return jsonify({"/" : "MOLS Help Request"},
         {"/set" : "Color=FFFFFF (6 digit hex format, no # sign)"},
         {"/setOff" : "No params: turns lights off (hex value 000000)"})
 
 
 def setColor(color):
     f = openFile()
-    red = REDPIN + "=" + "%.3f" % (int(color[:2], 16) / 255.0)
-    green = GREENPIN + "=" + "%.3f" % (int(color[2:4], 16) / 255.0)
-    blue = BLUEPIN + "=" + "%.3f" % (int(color[4:], 16) / 255.0)
+    red = str(REDPIN) + "=" + "%.3f" % (int(color[:2], 16) / 255.0)
+    green = str(GREENPIN) + "=" + "%.3f" % (int(color[2:4], 16) / 255.0)
+    blue = str(BLUEPIN) + "=" + "%.3f" % (int(color[4:], 16) / 255.0)
     print(red, file=f)
     print(green, file=f)
     print(blue, file=f)
