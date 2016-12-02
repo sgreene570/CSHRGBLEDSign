@@ -48,7 +48,6 @@ def index():
 
 
 def setColor(color):
-    f = openFile()
     red = str(REDPIN) + "=" + "%.3f" % (int(color[:2], 16) / 255.0)
     green = str(GREENPIN) + "=" + "%.3f" % (int(color[2:4], 16) / 255.0)
     blue = str(BLUEPIN) + "=" + "%.3f" % (int(color[4:], 16) / 255.0)
