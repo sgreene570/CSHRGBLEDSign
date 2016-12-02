@@ -17,12 +17,18 @@ app = Flask(__name__)
 REDPIN = 22
 GREENPIN = 23
 BLUEPIN = 24
+f = open(str(Path("/dev/pi-blaster").absolute()), "w", 0)
 
 
-@app.route("/set", methods=["POST"])
+@app.route("/set", methods=["POST", "GET"])
 def parseColor():
     color = request.form["color"]
-    setColor(color)
+    try:
+        setColor(color)
+    except ValueError:
+        color = stringColor(color)
+        setColor(color)
+
     return jsonify({"Function" : "Set color"},
         {"Color" : str(color)})
 
@@ -80,12 +86,6 @@ def stringColor(string):
     n = int(h.hexdigest(), 16)
     n = n % (256 ** 3)
     return "%06x" % n
-
-
-def openFile():
-    #open file with write premissions and instant flushing
-    f = open(str(Path("/dev/pi-blaster").absolute()), "w", 0)
-    return f
 
 
 if __name__ == "__main__":
