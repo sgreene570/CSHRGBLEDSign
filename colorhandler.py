@@ -1,10 +1,8 @@
 """
 colorhandler.py
-A flask script that handles requests to change GPIO PWN duty cycle 
+A flask script that handles http requests to change GPIO PWN duty cycle
 with the pi-blaster library.
-Change pin numbers at the top of the setColor function 
-to change which pinouts of the raspi are used.
-Author: Stephen Greene 
+Author: Stephen Greene
 """
 from __future__ import print_function
 from flask import Flask, redirect, request, render_template, jsonify
@@ -16,40 +14,17 @@ from flask_restful import Resource, Api
 app = Flask(__name__)
 
 
+REDPIN = 22
+BLUEPIN = 23
+GREENPIN = 24
+
+
 @app.route("/set", methods=["POST"])
 def parseColor():
     color = request.form["color"]
     setColor(color)
-    return jsonify({"Function" : "Set color"}, 
+    return jsonify({"Function" : "Set color"},
         {"Color" : str(color)})
-
-
-@app.route("/setFade", methods=["POST"])
-def parseFade():
-    colorOne = request.form["colorOne"]
-    colorTwo = request.form["colorTwo"]
-    setFade(colorOne, colorTwo)
-    return jsonify({"Function" : "Fade"}, 
-        {"Starting color" : str(colorOne)},
-        {"Ending color" : str(colorTwo)})
-
-
-@app.route("/setString", methods=["POST"])
-def parseString():
-    color = stringColor(request.form["string"])
-    setColor(color)
-    return jsonify({"Function" : "Set color with string"}, 
-        {"Color" : str(color)})
-
-
-@app.route("/setStringFade", methods=["POST"])
-def praseStringFade():
-    colorOne = stringColor(request.form["stringOne"])
-    colorTwo = stringColor(request.form["stringTwo"])
-    setFade(colorOne, colorTwo)
-    return jsonify({"Function" : "Fade from Strings"}, 
-        {"Starting color" : str(colorOne)},
-        {"Ending color" : str(colorTwo)})
 
 
 @app.route("/setOff")
@@ -60,30 +35,27 @@ def turnOutputOff():
 
 @app.route("/")
 def index():
-    #basic instructions for connection to wrong url rather than 404
-    return jsonify({"Available functions" : "params"}, 
-        {"/set" : "Color=(6 digit hex format)"}, 
-        {"/setString" : "stringOne=""&stringTwo="" (to be converted to hex color value)"},
-        {"/setFade" : "colorOne=(6 digit hex format)&colorTw=(6 digit hex format)"},
-        {"/setStringFade" : "stringOne=""&stringTwo="" (to be converted to hex color values)"},
+    #basic instructions for connection to /
+    return jsonify({"MOLS Help Request"},
+        {"/set" : "Color=FFFFFF (6 digit hex format, no # sign)"},
         {"/setOff" : "No params: turns lights off (hex value 000000)"})
 
 
 def setColor(color):
     f = openFile()
-    red = "22=" + "%.3f" % (int(color[:2], 16) / 255.0)
-    green = "23=" + "%.3f" % (int(color[2:4], 16) / 255.0)
-    blue = "24=" + "%.3f" % (int(color[4:], 16) / 255.0)
+    red = REDPIN + "=" + "%.3f" % (int(color[:2], 16) / 255.0)
+    green = GREENPIN + "=" + "%.3f" % (int(color[2:4], 16) / 255.0)
+    blue = BLUEPIN + "=" + "%.3f" % (int(color[4:], 16) / 255.0)
     print(red, file=f)
     print(green, file=f)
     print(blue, file=f)
 
 
 def setFade(colorOne, colorTwo):
-    colorOneVals = [int(colorOne[:2], 16), int(colorOne[2:4], 16), 
+    colorOneVals = [int(colorOne[:2], 16), int(colorOne[2:4], 16),
     int(colorOne[4:], 16)]
 
-    colorTwoVals = [int(colorTwo[:2], 16), int(colorTwo[2:4], 16), 
+    colorTwoVals = [int(colorTwo[:2], 16), int(colorTwo[2:4], 16),
     int(colorTwo[4:], 16)]
 
     while ((colorOneVals[0] != colorTwoVals[0])
@@ -102,6 +74,7 @@ def setFade(colorOne, colorTwo):
         setColor(hexColor)
 
 
+#Hash a given string to a 6 digit hex color
 def stringColor(string):
     h = hashlib.md5(string)
     n = int(h.hexdigest(), 16)
