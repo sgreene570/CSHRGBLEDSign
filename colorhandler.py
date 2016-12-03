@@ -54,6 +54,10 @@ def index():
         {"/setOff" : "No params: turns lights off (hex value 000000)"},
         {"Current color" : currColor})
 
+@app.errorhandler(429)
+def ratelimit_handler(e):
+    return jsonify(error="ratelimit exceeded %s" % e.description)
+
 
 def setColor(color):
     global currColor
