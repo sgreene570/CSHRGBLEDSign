@@ -2,7 +2,6 @@ import os
 import time
 import RPi.GPIO as GPIO
 import csh_ldap as ldap
-import colorhandler
 import login
 
 
@@ -52,12 +51,14 @@ def find_colors(user_dir):
     if user_dir is not None:
         cfile = os.path.join(user_dir, ".colors")
         colors =  os.popen("ssh -i /home/sgreen/.ssh/id_rsa "
-             + login.file_server + " cat " + cfile).read()
-        print(colors)
-        try:
-            colorhandler.setColor(colors)
-        except:
-            print(error)
+             + login.file_server + " cat " + cfile).read().split()
+        for color in colors:
+            print(color)
+            os.system("curl -X POST -d 'color=" + color +
+             "' localhost:80/set")
+            time.sleep(2)
+
+
 
 
 if __name__ == "__main__":
