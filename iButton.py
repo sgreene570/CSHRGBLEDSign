@@ -51,9 +51,13 @@ def get_ibutton():
 def find_colors(user_dir):
     if user_dir is not None:
         cfile = os.path.join(user_dir, ".colors")
-        if os.path.isdir(cfile):
-            with open(cfile, 'r') as c:
-                colorhandler.setColor(c.read())
+        colors =  os.popen("ssh -i /home/sgreen/.ssh/id_rsa "
+             + login.file_server + " cat " + cfile).read()
+        print(colors)
+        try:
+            colorhandler.setColor(colors)
+        except:
+            print(error)
 
 
 if __name__ == "__main__":
