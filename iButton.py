@@ -1,35 +1,32 @@
 import os
 import time
 import RPi.GPIO as GPIO
-import credentials as login
-import ldap
-GPIO.setmode(GPIO.BCM)
+import csh_ldap as ldap
 import colorhandler
+import login
 
 
-def find_user(varID, cache={}):
+def main():
+    global cshldap
+    cshldap  = ldap.CSHLDAP(login.ldap_user, login.ldap_pass)
+    get_ibutton()
+
+
+def find_user(varID):
     ibutton = varID.strip()
-    if ibutton in cache:
-        return cache[ibutton]
+    ibutton = "*" + ibutton[3:] + "01"
 
     try:
-    #conn = ldap.initialize(login.ldap_server, bytes_mode=True)
-        conn = ldap.initialize(login.ldap_server)
-        conn.simple_bind_s(login.ldap_user, login.ldap_pass)
-        ldap_results = conn.search_s('ou=Users,dc=csh,dc=rit,dc=edu',
-            ldap.SCOPE_SUBTREE, "(*ibutton=%s)" % ibutton, ['uid', 'homeDirectory'])
-        print('(ibutton=%s)' % ibutton)
-        return ldap_results[0][1]['homeDirectory'][0]
+        member = cshldap.get_member_ibutton(ibutton)
+        return member.homeDirectory
     except Exception as e:
         print(e)
         return None
 
 
 def get_ibutton():
-    GPIO.setup(27,GPIO.OUT)
     base_dir = '/sys/devices/w1_bus_master1/w1_master_slaves'
     delete_dir = '/sys/devices/w1_bus_master1/w1_master_remove'
-    GPIO.output(27,True)
     startTime = time.time()
 
     while True:
@@ -37,30 +34,26 @@ def get_ibutton():
         ibutton = data.read()
         ibutton = ibutton.strip()
         data.close()
-        if ibutton != 'not found.\n':
-            GPIO.output(27,False)
-            time.sleep(3)
-            print(ibutton)
+        time.sleep(1)
+        print(ibutton)
+        if ibutton != "not found.":
             try:
-                user_dir = find_user("67" + ibutton[3:] + "01")
-                if user is None:
-                    print("User not found")
-                else:
-                    find_colors(user_dir)
-
+                find_colors(find_user(ibutton))
             except Exception as e:
                 print(e)
 
-            d = open(delete_dir, "w")
-            d.write(ibutton)
-            GPIO.output(27, True)
+        d = open(delete_dir, "w")
+        d.write(ibutton)
 
     d.close()
-    GPIO.cleanup()
 
 
 def find_colors(user_dir):
-    cfile = os.path.join(userDir, ".color")
+    if user_dir is not None:
+        cfile = os.path.join(user_dir, ".colors")
+        if os.path.isdir(cfile):
+            with open(cfile, 'r') as c:
+                colorhandler.setColor(c.read())
 
 
 if __name__ == "__main__":
