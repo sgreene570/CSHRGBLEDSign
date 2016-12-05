@@ -31,10 +31,10 @@ def get_ibutton():
         ibutton = ibutton.strip()
         data.close()
         d = open(delete_dir, "w")
-        d.write(ibutton)
         time.sleep(3)
         print(ibutton)
         if ibutton != "not found.":
+            d.write(ibutton)
             try:
                 find_colors(find_user(ibutton))
             except Exception as e:
