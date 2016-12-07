@@ -53,10 +53,12 @@ def find_colors(user_dir):
         colors =  temp.read().split()
         temp.close()
         for color in colors:
-            print(color)
-            os.system("curl -X POST -d 'color=" + color +
-             "' localhost:80/set")
-            time.sleep(2)
+            if(color[0] is "$"):
+                time.sleep(float(color[1:]))
+            elif(color[0] is "#"):
+                print(color)
+                os.system("curl -X POST -d 'color=" + color[1:] +
+                "' localhost:80/set")
 
 
 if __name__ == "__main__":
