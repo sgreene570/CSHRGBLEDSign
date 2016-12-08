@@ -31,8 +31,8 @@ def get_ibutton():
         ibutton = ibutton.strip()
         data.close()
         d = open(delete_dir, "w")
-        print(ibutton)
         if ibutton != "not found.":
+            print(ibutton)
             d.write(ibutton)
             d.flush()
             try:
