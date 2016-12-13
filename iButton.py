@@ -52,12 +52,12 @@ def find_colors(user_dir):
              + login.file_server + " cat " + cfile)
         colors =  temp.read().split()
         temp.close()
-        for color in colors:
-            if(color[0] is "$"):
-                time.sleep(float(color[1:]))
-            elif(color[0] is "#"):
-                print(color)
-                os.system("curl -X POST -d 'color=" + color[1:] +
+        for line in colors:
+            if(line[:5] is "delay"):
+                time.sleep(float(line[7:]))
+            else:
+                print(line)
+                os.system("curl -X POST -d 'color=" + line +
                 "' localhost:80/set")
 
 

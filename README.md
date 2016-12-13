@@ -4,7 +4,7 @@ WIP Networked RGB LEDs using Flask and the pi-blaster library.
 For wiring, refer to the following image:
 http://mitchtech.net/wp-content/uploads/2013/01/raspi_rgb_led-300x194.png
 Colors are parsed through the python colour package.
-Colors can be passed as Hex Codes(#FFFFFF), rgb values(1, .5, 1), and english phrases("blue").
+Colors can be passed as Hex Codes(<code>#FFFFFF</code>), rgb values(<code>1, .5, 1</code>), and english phrases(<code>"blue"</code>).
 
 The included iButton.py script allows for user iButtons to access an LDAP server to find a .colors configuration in user homedirs.
 To start the Flask server, sudo su and then type 
