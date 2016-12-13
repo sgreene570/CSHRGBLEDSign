@@ -22,7 +22,7 @@ limiter = Limiter(
 REDPIN = 22
 GREENPIN = 23
 BLUEPIN = 24
-currColor = "000000"
+currColor = Color("#000")
 
 
 @app.route("/set", methods=["POST", "GET"])
@@ -43,7 +43,7 @@ def parseColor():
 
 @app.route("/setOff")
 def turnOutputOff():
-    setColor("000000");
+    setColor("#000");
     return jsonify({"Function" : "Set lights to OFF"})
 
 
@@ -51,9 +51,9 @@ def turnOutputOff():
 def index():
     #basic instructions for connection to /
     return jsonify({"/" : "MOLS Help Request"},
-        {"/set" : "Color=FFFFFF (6 digit hex format, no # sign)"},
-        {"/setOff" : "No params: turns lights off (hex value 000000)"},
-        {"Current color" : currColor})
+        {"/set" : "Color=#FFFFFF (Hex color code or english name allowed)"},
+        {"/setOff" : "No params: turns lights off"},
+        {"Current color" : currColor.hex})
 
 @app.errorhandler(429)
 def ratelimit_handler(e):
@@ -62,10 +62,10 @@ def ratelimit_handler(e):
 
 def setColor(color):
     global currColor
-    currColor = color
-    red = str(REDPIN) + "=" + "%.3f" % (int(color[:2], 16) / 255.0)
-    green = str(GREENPIN) + "=" + "%.3f" % (int(color[2:4], 16) / 255.0)
-    blue = str(BLUEPIN) + "=" + "%.3f" % (int(color[4:], 16) / 255.0)
+    currColor = Color(color)
+    red = str(REDPIN) + "=" + "%.3f" % (currColor.red)
+    green = str(GREENPIN) + "=" + "%.3f" % (currColor.green)
+    blue = str(BLUEPIN) + "=" + "%.3f" % (currColor.blue)
     os.system("echo " + red + " >> /dev/pi-blaster")
     os.system("echo " + green + " >> /dev/pi-blaster")
     os.system("echo " + blue + " >> /dev/pi-blaster")
