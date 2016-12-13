@@ -9,6 +9,7 @@ from flask_restful import Resource, Api
 from pathlib import Path
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from colour import Color
 import time, hashlib, os
 
 
