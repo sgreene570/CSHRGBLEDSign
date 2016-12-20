@@ -58,7 +58,7 @@ def find_colors(user_dir):
             else:
                 print(line)
                 os.system("curl -X POST -d 'color=" + line +
-                "' localhost:80/set")
+                "' localhost:80")
 
 
 if __name__ == "__main__":

@@ -6,7 +6,6 @@ Author: Stephen Greene
 """
 from flask import Flask, redirect, request, render_template, jsonify
 from flask_restful import Resource, Api
-from pathlib import Path
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from colour import Color
@@ -22,54 +21,44 @@ limiter = Limiter(
 REDPIN = 22
 GREENPIN = 23
 BLUEPIN = 24
-currColor = Color("#000")
+current_color = Color("#000")
 
 
-@app.route("/set", methods=["POST", "GET"])
+@app.route("/", methods=["POST"])
 @limiter.limit("4 per second")
-def parseColor():
+def parse_color():
     color = request.form["color"]
+    if color is None:
+        abort(400)
+
     try:
-        setColor(color)
+        set_color(color)
     except ValueError:
-        color = "C1007C"
-        setColor(color)
+        set_color("#C1007C")
         return jsonify({"Input error" : "Default color used"},
-                {"Color" : color})
+                {"Current color" : current_color})
 
-    return jsonify({"Function" : "Set color"},
-        {"Color" : color})
-
-
-@app.route("/setOff")
-def turnOutputOff():
-    setColor("#000");
-    return jsonify({"Function" : "Set lights to OFF"})
+    return jsonify({"Current color" : current_color})
 
 
-@app.route("/")
-def index():
-    #basic instructions for connection to /
-    return jsonify({"/" : "MOLS Help Request"},
-        {"/set" : "Color=#FFFFFF (Hex color code or english name allowed)"},
-        {"/setOff" : "No params: turns lights off"},
-        {"Current color" : currColor.hex})
+@app.route("/status", methods=["GET"])
+@limiter.limit("4 per second")
+def get_current_color():
+    return jsonify({"Current color" : current_color})
+
 
 @app.errorhandler(429)
 def ratelimit_handler(e):
     return jsonify(error="ratelimit exceeded %s" % e.description)
 
 
-def setColor(color):
-    global currColor
-    currColor = Color(color)
-    red = str(REDPIN) + "=" + "%.3f" % (currColor.red)
-    green = str(GREENPIN) + "=" + "%.3f" % (currColor.green)
-    blue = str(BLUEPIN) + "=" + "%.3f" % (currColor.blue)
+def set_color(color):
+    global current_color
+    current_color = Color(color)
+    red = str(REDPIN) + "=" + "%.3f" % (current_color.red)
+    green = str(GREENPIN) + "=" + "%.3f" % (current_color.green)
+    blue = str(BLUEPIN) + "=" + "%.3f" % (current_color.blue)
+    #Use os.system calls to avoid opening/closing the text file
     os.system("echo " + red + " >> /dev/pi-blaster")
     os.system("echo " + green + " >> /dev/pi-blaster")
     os.system("echo " + blue + " >> /dev/pi-blaster")
-
-
-if __name__ == "__main__":
-   app.run()
