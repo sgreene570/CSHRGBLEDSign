@@ -19,12 +19,10 @@ To start the Flask server, sudo su and then type
 Flask run --host=x.x.x.x --port=80
 </code>
 <br>
-To use the iButton script, type the following:
+To install the iButton script requirements, type the following:
 <br>
 <code>
 pip -r install requirements.txt
-<br>
-python iButton.py
 </code>
 <br>
 The iButton script will print out recognized iButtons and the corresponding colors that are set.
