@@ -2,6 +2,8 @@
 
 WIP Networked RGB LEDs using Flask and the pi-blaster library.
 <br>
+Written and tested in Python 3.
+<br>
 # Base Setup
 To set up the LEDs and other hardware, refer to [this wiring diagram.](http://mitchtech.net/wp-content/uploads/2013/01/raspi_rgb_led-300x194.png)
 <br>
