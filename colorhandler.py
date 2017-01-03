@@ -21,7 +21,9 @@ limiter = Limiter(
 REDPIN = 22
 GREENPIN = 23
 BLUEPIN = 24
+defualt_color = "#C1007C"
 current_color = Color("#000")
+
 
 
 @app.route("/", methods=["POST"])
@@ -34,7 +36,7 @@ def parse_color():
     try:
         set_color(color)
     except ValueError:
-        set_color("#C1007C")
+        set_color(default_color)
         return jsonify({"Input error" : "Default color used"},
                 {"Current color" : current_color})
 
@@ -61,4 +63,4 @@ def set_color(color):
     #Use os.system calls to avoid opening/closing the text file
     os.system("echo " + red + " >> /dev/pi-blaster")
     os.system("echo " + green + " >> /dev/pi-blaster")
-    os.system("echo " + blue + " >> /dev/pi-blaster")
+    os.system("echo " + blue + " >> /dev/pi-blaster"
