@@ -38,7 +38,7 @@ def parse_color():
     except ValueError:
         set_color(default_color)
         return jsonify({"Input error" : "Default color used"},
-                {"Current color" : current_color})
+                {"Current color" : current_color.hex})
 
     return jsonify({"Current color" : current_color.hex})
 
@@ -46,7 +46,7 @@ def parse_color():
 @app.route("/status", methods=["GET"])
 @limiter.limit("4 per second")
 def get_current_color():
-    return jsonify({"Current color" : current_color})
+    return jsonify({"Current color" : current_color.hex})
 
 
 @app.errorhandler(429)
